@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Surprise ❤️</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;700;900&family=Sacramento&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #ea638c 0%, #d83a6f 60%, #ba1e52 100%);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-x: hidden;
+      color: #fff;
+      padding: 24px 16px;
+      user-select: none;
+    }
+
+    /* Top String & Hanging Polaroids */
+    .clothesline-container {
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Hanging string line */
+    .clothesline {
+      position: absolute;
+      top: 18px;
+      left: 5%;
+      width: 90%;
+      height: 20px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.45);
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .polaroids-wrapper {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-start;
+      z-index: 2;
+      flex-wrap: wrap;
+    }
+
+    .polaroid {
+      background: #ffffff;
+      padding: 10px 10px 24px 10px;
+      border-radius: 4px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      width: 160px;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .polaroid:hover {
+      transform: scale(1.08) rotate(0deg) !important;
+      z-index: 10;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Clips holding the photos */
+    .polaroid::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 22px;
+      background: #f7d070;
+      border-radius: 3px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .polaroid:nth-child(1) { transform: rotate(-5deg); }
+    .polaroid:nth-child(2) { transform: rotate(3deg); margin-top: 8px; }
+    .polaroid:nth-child(3) { transform: rotate(-3deg); }
+
+    .polaroid img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
+
+    .polaroid .caption {
+      color: #e63946;
+      font-size: 0.95rem;
+      text-align: center;
+      margin-top: 8px;
+      font-family: 'Caveat', cursive;
+    }
+
+    /* Center Main Title */
+    .center-content {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .main-title {
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .main-title .heart {
+      color: #ffffff;
+      animation: pulseHeart 1.4s infinite ease-in-out;
+      display: inline-block;
+    }
+
+    .sub-caption {
+      font-family: 'Sacramento', cursive;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      opacity: 0.95;
+      margin-top: 4px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Bottom Interactive Bar */
+    .bottom-bar {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 20px;
+    }
+
+    .interactive-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(8px);
+      padding: 12px 20px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      color: #fff;
+    }
+
+    .interactive-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .interactive-btn .icon {
+      font-size: 2rem;
+    }
+
+    .btn-text {
+      text-align: left;
+    }
+
+    .btn-text span {
+      display: block;
+      font-size: 0.75rem;
+      opacity: 0.85;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-text strong {
+      font-size: 1rem;
+    }
+
+    /* Audio Pill */
+    .audio-pill {
+      background: rgba(0, 0, 0, 0.25);
+      padding: 8px 16px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* Letter / Wish Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fffdf9;
+      color: #2b2b2b;
+      max-width: 460px;
+      width: 100%;
+      border-radius: 20px;
+      padding: 30px 26px;
+      position: relative;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+      animation: popup 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .modal-title {
+      font-family: 'Sacramento', cursive;
+      font-size: 2.4rem;
+      color: #d83a6f;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .modal-body {
+      font-family: 'Caveat', cursive;
+      font-size: 1.35rem;
+      line-height: 1.6;
+      color: #444;
+      text-align: center;
+    }
+
+    @keyframes pulseHeart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.22); }
+    }
+
+    @keyframes popup {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hanging Photos Section -->
+  <div class="clothesline-container">
+    <div class="clothesline"></div>
+    <div class="polaroids-wrapper">
+      <div class="polaroid" onclick="fireHearts()">
+        <img src="1.JPEG" alt="Memory 1" />
+        <div class="caption">first date ❤️</div>
+      </div>
+      <div class="polaroid" onclick="fireHearts()">
+        <img src="2.JPEG" alt="Memory 2" />
+        <div class="caption">always smiling ✨</div>
+      </div>
+      <div class="polaroid" onclick="fireHearts()">
+        <img src="3.JPEG" alt="Memory 3" />
+        <div class="caption">forever us 🫂</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center Typography -->
+  <div class="center-content">
+    <h1 class="main-title">
+      I <span class="heart">❤️</span> YOU BHONDU 
+    </h1>
+    <p class="sub-caption">Happy Birthday to my favourite person</p>
+  </div>
+
+  <!-- Bottom Buttons -->
+  <div class="bottom-bar">
+    <!-- Birthday Cake Wish -->
+    <div class="interactive-btn" id="cakeBtn">
+      <span class="icon">🎂</span>
+      <div class="btn-text">
+        <span>Blow candle</span>
+        <strong>Make a wish</strong>
+      </div>
+    </div>
+
+    <!-- Audio Player Toggle -->
+    <div class="audio-pill" id="audioToggle">
+      <span id="audioIcon">▶️</span>
+      <span id="audioLabel">Play Song</span>
+    </div>
+
+    <!-- Gift Box Surprise -->
+    <div class="interactive-btn" id="giftBtn">
+      <span class="icon">🎁</span>
+      <div class="btn-text">
+        <span>Special Surprise</span>
+        <strong>Click here</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Letter Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <button class="close-btn" id="closeModal">&times;</button>
+      <h2 class="modal-title" id="modalTitle">Happy Birthday!</h2>
+      <p class="modal-body" id="modalBody">
+        No distance could ever dim how much you mean to me.<br><br>
+        Thank you for being my favorite notification, my biggest comfort, and my brightest smile. Today is all about you! 💖
+      </p>
+    </div>
+  </div>
+
+  <!-- Background Music Track -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="audio.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const closeModal = document.getElementById('closeModal');
+    const giftBtn = document.getElementById('giftBtn');
+    const cakeBtn = document.getElementById('cakeBtn');
+    const audioToggle = document.getElementById('audioToggle');
+    const bgMusic = document.getElementById('bgMusic');
+    const audioIcon = document.getElementById('audioIcon');
+    const audioLabel = document.getElementById('audioLabel');
+
+    // Confetti on gift click
+    function triggerConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function fireHearts() {
+      confetti({
+        particleCount: 25,
+        spread: 60,
+        shapes: ['circle'],
+        colors: ['#ffffff', '#ffccd5', '#ff4d6d']
+      });
+    }
+
+    // Gift Button Handler
+    giftBtn.addEventListener('click', () => {
+      triggerConfetti();
+      modalTitle.textContent = "A Letter For You 💌";
+      modalBody.innerHTML = `
+        Every memory we build together is my most prized treasure.<br><br>
+        Even miles apart, you make every ordinary day feel extraordinary. Have the sweetest and happiest birthday today! 🌸✨
+      `;
+      modalOverlay.classList.add('active');
+    });
+
+    // Cake Button Handler
+    cakeBtn.addEventListener('click', () => {
+      triggerConfetti();
+      modalTitle.textContent = "Make a wish! 🕯️";
+      modalBody.innerHTML = `
+        Close your eyes, make your biggest wish, and know that I'm rooting for every single one of your dreams to come true! 🎂✨
+      `;
+      modalOverlay.classList.add('active');
+    });
+
+    // Close Modal
+    closeModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+    });
+
+    // Audio Play / Pause
+    audioToggle.addEventListener('click', () => {
+      if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+          audioIcon.textContent = '⏸️';
+          audioLabel.textContent = 'Pause Song';
+        }).catch(() => {});
+      } else {
+        bgMusic.pause();
+        audioIcon.textContent = '▶️';
+        audioLabel.textContent = 'Play Song';
+      }
+    });
+  </script>
+</body>
+</html>
